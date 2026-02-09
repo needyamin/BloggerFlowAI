@@ -1,0 +1,33 @@
+# Run: scheduler | direct
+RUN_MODE=direct
+
+# Blogger
+BLOGGER_BLOG_ID=3422137415075355570
+
+# Credentials (optional)
+# CREDENTIALS_FILE=credentials/credentials.json
+# TOKEN_FILE=credentials/token.json
+
+# AI APIs
+
+# OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=
+
+# Post limits
+BLOG_POST_MIN_WORDS=3000
+FORCE_POST=true
+BLOG_POST_MAX_WORDS=12000
+POST_TITLE_MAX_CHARS=100
+
+# AI output (outline sections, words per section)
+AI_MIN_TOKENS=1024
+AI_MAX_TOKENS=4096
+OUTLINE_SECTIONS=1
+SECTION_WORDS=50
+
+# Topic (optional)
+# TOPIC=Latest Technology News
+
+# Logging
+LOG_VERBOSE=true
+FIRST_SECTION_NAME=Introduction and Title

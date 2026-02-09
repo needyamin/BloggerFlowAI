@@ -5,9 +5,8 @@ import time
 import requests
 import trafilatura
 from datetime import datetime
-from config import SOURCES, MAX_ITEMS, INTERVAL_MINUTES, TOPICS
+from .config import SOURCES, MAX_ITEMS, INTERVAL_MINUTES, TOPICS, TOPIC_KEYWORDS, OUTPUT_FILE
 
-OUTPUT_FILE = "news.json"
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 
@@ -34,7 +33,11 @@ def get_content(entry, link):
 
 def matches_topic(text):
     t = (text or "").lower()
-    return any(topic.lower() in t for topic in TOPICS)
+    # Check if any keyword from any topic mapping is in the text
+    for major_topic, keywords in TOPIC_KEYWORDS.items():
+        if any(kw.lower() in t for kw in keywords):
+            return True
+    return False
 
 
 def fetch_feed(url):
@@ -48,6 +51,7 @@ def fetch_feed(url):
 def collect():
     seen = set()
     items = []
+    print(f"[+] Scanning {len(SOURCES)} high-authority sources...")
     for url in SOURCES:
         feed = fetch_feed(url)
         if not feed or not feed.entries:
@@ -55,19 +59,32 @@ def collect():
         source = feed.feed.get("title", url)
         for e in feed.entries:
             link = getattr(e, "link", "")
-            if link in seen:
+            if not link or link in seen:
                 continue
+            
             title = getattr(e, "title", "Untitled")
+            published = getattr(e, "published", "")
+            
+            # Year filter: Priority to 2026. If no year mentioned, we might accept it 
+            # if we are sure it's recent, but user requested strictness.
+            if published:
+                if not any(year in published for year in ["2026", "2027", "2028"]):
+                    continue
+            else:
+                # If no date, we take a risk OR we skip. Let's skip for high authenticity.
+                continue
+                
             content = get_content(e, link)
             if not matches_topic(title) and not matches_topic(content):
                 continue
+                
             seen.add(link)
             items.append({
                 "title": title,
                 "content": content,
                 "link": link,
                 "source": source,
-                "published": getattr(e, "published", ""),
+                "published": published,
             })
             if MAX_ITEMS and len(items) >= MAX_ITEMS:
                 break
@@ -75,6 +92,15 @@ def collect():
             break
     return items
 
+
+def run_once():
+    """Collect news once and save to OUTPUT_FILE."""
+    ts = datetime.now().isoformat()
+    items = collect()
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump({"fetched": ts, "items": items}, f, indent=2, ensure_ascii=False)
+    print(f"[+] News collected: {len(items)} items saved to {OUTPUT_FILE}")
+    return items
 
 def run():
     while True:

@@ -7,15 +7,6 @@ __pycache__/
 env/
 venv/
 ENV/
-env.bak/
-venv.bak/
-
-# Node (Worker)
-node_modules/
-.wrangler/
-dist/
-build/
-.turbo/
 
 # OS/IDEs
 .vscode/
@@ -23,11 +14,11 @@ build/
 .DS_Store
 Thumbs.db
 
-# Secrets
-credentials.json
+# Secrets & Credentials
+credentials/*.json
 token.json
 .env
 
-# App Specific Outputs
-realtime_data_collect_bot/news.json
-
+# Application Data
+data/*.json
+!data/.gitkeep

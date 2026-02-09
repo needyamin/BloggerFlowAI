@@ -1,0 +1,144 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  BloggerFlowAI - Strategic Media Workflow                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                   🚀 STAGE 0: NEWSBOT INDUCTION                           │
+│     (Guardian, NYT, TechCrunch, Reuters, BBC, Scholarships.com)          │
+└────────────────────────────┬─────────────────────────────────────────────┘
+                             │
+                             ▼
+        ┌────────────────────────────────────────────────────┐
+        │      🗞️ CONTEXT FILTER: 2026 STRICTNESS           │
+        │                                                     │
+        │  • Validates Year: 2026/2027                       │
+        │  • Extracts: Content Snippets, Titles, Links       │
+        │  • Saves to: data/news.json                        │
+        └────────────────────┬───────────────────────────────┘
+                             │
+                             ▼
+        ┌────────────────────────────────────────────────────┐
+        │      🤖 STAGE 1: OpenAI API (Primary)             │
+        │                                                     │
+        │  Model: gpt-4o-mini | Persona: Media Strategist    │
+        └────────────────────┬───────────────────────────────┘
+                             │
+                    ┌────────┴────────┐
+                    │   Success? ✅    │
+                    │       │          │
+                    │      Yes         │
+                    └──────┼───────────┘
+                           │
+                  No ❌ (or NOT CONFIGURED)
+                           │
+                           ▼
+        ┌────────────────────────────────────────────────────┐
+        │      🎯 STAGE 2: Google Gemini (Fallback)           │
+        │                                                     │
+        │  Model: gemini-3-flash | Persona: AdSense Spec.    │
+        └────────────────────┬───────────────────────────────┘
+                             │
+                    ┌────────┴────────┐
+                    │   Success? ✅    │
+                    │       │          │
+                    │      Yes         │
+                    └──────┼───────────┘
+                           │
+                          No ❌
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │  All Failed  │
+                    │   Return ❌   │
+                    └──────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                         SUCCESSFUL OUTPUT                                 │
+│                                                                           │
+│  ✅ ADSENSE-READY CONTENT:                                                │
+│  {                                                                        │
+│    "title": "2026 Strategic Shifts in Global Scholarships",               │
+│    "content": "Verified Report: Mon, 09 Feb 2026 at 15:40 GMT...",        │
+│    "labels": ["Scholarships & Study Abroad", "Education & Learning"]      │
+│  }                                                                        │
+└──────────────────────────────┬───────────────────────────────────────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │  POST TO BLOGGER.COM │
+                    │         🚀            │
+                    └──────────────────────┘
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                            CONFIGURATION GUIDE                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📝 .ENV FILE SETUP:
+
+# ── OpenAI API (Optional - Costs Money) ──
+# OPENAI_API_KEY=sk-proj-...your-key-here
+
+# ── Google Gemini API (Recommended - FREE!) ──
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                        RECOMMENDED CONFIGURATIONS                          ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Option 1: FREE ONLY (Gemini Only)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ GEMINI_API_KEY=AIzaSy...
+❌ # OPENAI_API_KEY= (commented out)
+
+Pros: 100% Free, Generous limits
+Cons: No fallback if Gemini is down
+
+
+Option 2: MAXIMUM RELIABILITY (Production)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ OPENAI_API_KEY=sk-proj-...
+✅ GEMINI_API_KEY=AIzaSy...
+
+Pros: Double redundancy
+Cons: OpenAI costs money
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                         CODE FILES INVOLVED                                ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📁 src/models/remote_agent/ai_providers.py
+   └─ fetch_openai()    [OpenAI integration]
+   └─ fetch_gemini()    [Gemini integration]
+
+📁 src/app/post.py
+   └─ _fetch_ai()        [Failover logic]
+   └─ generate_ai_content() [Main orchestration]
+
+📁 src/config.py
+   └─ OPENAI_API_KEY    [OpenAI key]
+   └─ GEMINI_API_KEY    [Gemini key]
+
+📁 .env
+   └─ Configuration file with all API keys
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                            TESTING & DEBUGGING                             ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Test Gemini API:
+  python scripts/test_gemini.py
+
+Check AI Status:
+  python scripts/switch_ai.py status
+
+Run Automation:
+  python main.py
+
+Check logs:
+  • Look for "[!] All APIs failed" messages
+  • Watching for "Posted: https://..." success message
+```

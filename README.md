@@ -1,34 +1,61 @@
-# Auto Post Blogger AI
-Massive, realistic, 10,000+ word blog posts automated for Blogger.com.
+# 🚀 BloggerFlowAI: Master Monetization Edition
+Massive, authoritative, 2026-current blog posts automated for maximum AdSense revenue. This system doesn't just "post news"—it strategically engineers high-CPC digital assets using real-time global context.
 
-## 🚀 How it Works
-1. **Modular Generation**: The system generates a detailed 15-section outline and then fetches each section individually to achieve industry-leading depth and word count.
-2. **Investigative Journalism**: The AI is tuned to skip generic fluff and use real-world data, live authority links (Wikipedia, Gov, etc.), and copyright-free images.
-3. **Automated Stitching**: The Python engine cleans and merges all sections into a perfect single HTML post.
+## 🌟 Strategic Features
+1. **Elite News Induction**: Scans 21+ high-authority sources (Guardian, NYT, Reuters, TechCrunch) to find **2026-only** authentic news.
+2. **AdSense E-E-A-T Strategy**: The AI persona is a Digital Media Strategist. It prioritizes Experience, Expertise, Authoritativeness, and Trustworthiness.
+3. **High-CPC Categorization**: Automatically maps content to 5 premium, high-paid niches:
+   - 🎓 **Education & Learning**
+   - ✈️ **Scholarships & Study Abroad**
+   - 🌍 **International (Overseas) News**
+   - 💻 **Latest Tech News**
+   - 📱 **Unique & Innovative Gadget Reviews**
+4. **Authority Signaling**: Every post includes "Verified Reporting" timestamps (Date, Day, Time) and clickable source citations to maximize domain trust and AdSense approval.
 
 ## 🛠️ Setup
-1. **Install Python Requirements**:
+1. **Install Requirements**:
    ```bash
    pip install -r requirements.txt
    ```
-2. **Deploy AI Engine**:
-   ```bash
-   cd worker-ai-gpt-oss-120b
-   npm install
-   & "C:\Program Files\nodejs\npm.cmd" run deploy
-   ```
-3. **Configuration**:
-   - Update `BLOGGER_BLOG_ID` in `config.py` or `.env`.
-   - Place your Google Cloud `credentials.json` in the root folder.
+2. **Configuration**:
+   - Update `BLOGGER_BLOG_ID` in `.env`.
+   - Place Google Cloud `credentials.json` and `token.json` in `credentials/`.
+   - **AI Providers**:
+     - **OpenAI API** (Primary): Add `OPENAI_API_KEY` to `.env`.
+     - **Google Gemini API** (Fallback): Add `GEMINI_API_KEY` to `.env`.
 
-## 📄 Core Files
-- `blogger_post.py`: Coordinates the multi-stage 10,000-word generation and posting.
-- `scheduler.py`: Runs the automation on a daily schedule.
-- `config.py`: Manages the strictly allowed topics and Worker URL.
-- `realtime_data_collect_bot/`: Fetches trending news from RSS feeds to populate the generation pipeline.
-- `worker-ai-gpt-oss-120b/`: The Cloudflare Worker AI source (Investigative Journalist persona).
+## 🤖 Integrated Workflow
+The system follows a proprietary 3-stage funnel:
+1. **COLLECT**: The `Custom Agent` (NewsBot) scrapes real 2026 events from verified feeds.
+2. **STRATEGIZE**: AI summarizes news using "Executive Summaries" and high-level industrial terminology.
+3. **DEPLOY**: Articles are formatted with semantic HTML (`h2`, `h3`, `p style="justify"`) and posted to Blogger.
+
+## 📄 Project Structure
+```
+BloggerFlowAI/
+├── src/
+│   ├── app/           # Main Blogger & Posting Logic
+│   ├── models/
+│   │   ├── custom_agent/   # 🗞️ NewsBot (Sources & Year Filters)
+│   │   └── remote_agent/   # 🧠 AI Providers (OpenAI & Gemini)
+│   └── config.py      # Main application config
+├── scripts/           # Switch AI, Test Workflows, Deploy tools
+├── docs/              # Strategic Guides & Diagrams
+├── data/              # 💾 Real-time context (news.json)
+└── main.py            # Master Entry Point
+```
+
+## 🔄 AI Switcher CLI
+Manage your failover stack easily:
+```bash
+python scripts/switch_ai.py status  # Check current provider
+python scripts/switch_ai.py all      # Enable OpenAI -> Gemini Failover
+python scripts/switch_ai.py gemini   # Force Gemini Only
+```
 
 ## ▶️ Usage
-- **Generate & Post Now**: `python blogger_post.py`
-- **Start Automation**: `python scheduler.py`
-- **Collect Trending News**: `cd realtime_data_collect_bot && python bot.py`
+- **Normal Operation**: `python main.py`
+- **Full Workflow Stress Test**: `python scripts/test_full_workflow.py`
+- **Check AI APIs**: `python scripts/switch_ai.py status`
+
+📖 For detailed strategic setup, see **[docs/AI_FAILOVER_DIAGRAM.txt](docs/AI_FAILOVER_DIAGRAM.txt)**.
