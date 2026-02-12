@@ -26,7 +26,6 @@ BLOG_POST_MAX_WORDS = int(os.getenv("BLOG_POST_MAX_WORDS", "12000"))
 POST_TITLE_MAX_CHARS = int(os.getenv("POST_TITLE_MAX_CHARS", "100"))
 
 # --- AI output (tokens & structure) ---
-AI_MIN_TOKENS = int(os.getenv("AI_MIN_TOKENS", "1024"))
 AI_MAX_TOKENS = int(os.getenv("AI_MAX_TOKENS", "4096"))
 OUTLINE_SECTIONS = int(os.getenv("OUTLINE_SECTIONS", "15"))
 SECTION_WORDS = int(os.getenv("SECTION_WORDS", "100"))
@@ -44,9 +43,21 @@ MSG_PHASE2_SECTION = os.getenv("MSG_PHASE2_SECTION", "[+] PHASE 2: Generating se
 MSG_COMPLETE = os.getenv("MSG_COMPLETE", "[+] MASSIVE Generation Complete! {wc} words (target: {min}-{max})")
 FIRST_SECTION_NAME = os.getenv("FIRST_SECTION_NAME", "Introduction and Title")
 
+# --- Categories (mapping for AI categorization) ---
+DEFAULT_CATEGORIES = """- Education & Learning
+- Scholarships & Study Abroad
+- International (Overseas) News
+- Latest Tech News
+- Unique & Innovative Gadget Reviews"""
+CATEGORIES = os.getenv("CATEGORIES", DEFAULT_CATEGORIES).replace("\\n", "\n")
+
 # --- Topics ---
 TOPIC = os.getenv("TOPIC")
-TOPICS = [
-    "Education", "Scholarship Abroad", "Latest Technology News",
-    "Scholarship in USA/Japan/UK", "Global Breaking News", "Viral News", "Secret Societies",
-]
+env_topics = os.getenv("TOPICS")
+if env_topics:
+    TOPICS = [t.strip() for t in env_topics.split(",")]
+else:
+    TOPICS = [
+        "Education", "Scholarship Abroad", "Latest Technology News",
+        "Scholarship in USA/Japan/UK", "Global Breaking News", "Viral News", "Secret Societies",
+    ]

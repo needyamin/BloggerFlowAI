@@ -1,33 +1,33 @@
-# Run: scheduler | direct
+# Core Settings
 RUN_MODE=direct
 
-# Blogger
+# Blogger settings
 BLOGGER_BLOG_ID=3422137415075355570
-
-# Credentials (optional)
 # CREDENTIALS_FILE=credentials/credentials.json
 # TOKEN_FILE=credentials/token.json
 
 # AI APIs
-
 # OPENAI_API_KEY=sk-...
-GEMINI_API_KEY=
+GEMINI_API_KEY=AIzaSyDgPWOT41hHgJG9M-pRgKRTaR638b2q4Ss
 
-# Post limits
+# Article Generation Limits
 BLOG_POST_MIN_WORDS=3000
-FORCE_POST=true
 BLOG_POST_MAX_WORDS=12000
-POST_TITLE_MAX_CHARS=100
-
-# AI output (outline sections, words per section)
-AI_MIN_TOKENS=1024
+FORCE_POST=true
+OUTLINE_SECTIONS=15
+SECTION_WORDS=800
 AI_MAX_TOKENS=4096
-OUTLINE_SECTIONS=1
-SECTION_WORDS=50
 
-# Topic (optional)
+# Topic & Category Control
 # TOPIC=Latest Technology News
+TOPICS=Education, Scholarship Abroad, Latest Technology News, Global Breaking News, Viral News
+CATEGORIES=   - Education & Learning\n   - Scholarships & Study Abroad\n   - International (Overseas) News\n   - Latest Tech News\n   - Unique & Innovative Gadget Reviews
 
-# Logging
+# News Collection (NewsBot)
+MAX_NEWS_ITEMS=15
+INTERVAL_MINUTES=60
+NEWS_OUTPUT=data/news.json
+
+# Appearance & Logging
+FIRST_SECTION_NAME=Introduction and Strategic Overview
 LOG_VERBOSE=true
-FIRST_SECTION_NAME=Introduction and Title

@@ -53,5 +53,5 @@ SOURCES = [
     "https://www.bloomberg.com/feed/podcast/bloomberg-news.xml"
 ]
 
-MAX_ITEMS = 15
-INTERVAL_MINUTES = 60
+MAX_ITEMS = int(os.getenv("MAX_NEWS_ITEMS", "15"))
+INTERVAL_MINUTES = int(os.getenv("INTERVAL_MINUTES", "60"))

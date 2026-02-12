@@ -5,13 +5,13 @@ import re
 
 def _get_config():
     try:
-        from config import OUTLINE_SECTIONS, SECTION_WORDS, BLOG_POST_MAX_WORDS, AI_MAX_TOKENS
-        return OUTLINE_SECTIONS, SECTION_WORDS, BLOG_POST_MAX_WORDS, AI_MAX_TOKENS
+        from config import OUTLINE_SECTIONS, SECTION_WORDS, BLOG_POST_MAX_WORDS, AI_MAX_TOKENS, CATEGORIES
+        return OUTLINE_SECTIONS, SECTION_WORDS, BLOG_POST_MAX_WORDS, AI_MAX_TOKENS, CATEGORIES
     except ImportError:
-        return 15, 1000, 12000, 4096
+        return 15, 1000, 12000, 4096, "- General"
 
 def _transform_query(q):
-    secs, sec_words, post_words, _ = _get_config()
+    secs, sec_words, post_words, _, _ = _get_config()
     q = (q or '').strip()
     if q.startswith('[MODE:'):
         return q  # already custom prompt from post.py
@@ -37,11 +37,7 @@ CONTENT QUALITY & ADSENSE RULES:
    - Use professional terminology (e.g., instead of "new tech", use "disruptive innovation").
    - NO clickbait, NO sensitive/prohibited niches, NO low-quality fluff.
 4. CATEGORIZATION: You MUST map content to exactly:
-   - Education & Learning
-   - Scholarships & Study Abroad
-   - International (Overseas) News
-   - Latest Tech News
-   - Unique & Innovative Gadget Reviews
+{!!CATEGORIES!!}
 5. STRUCTURE: 
    - Start with a data-driven "Executive Summary".
    - Break content into logical sub-points with <ul> or <ol>.
@@ -96,12 +92,16 @@ def fetch_openai(query):
         return None
     try:
         from openai import OpenAI
-        _, _, _, max_tok = _get_config()
+        _, _, _, max_tok, categories = _get_config()
         client = OpenAI(api_key=key)
+        
+        # Inject dynamic categories
+        session_system = SYSTEM.replace("{!!CATEGORIES!!}", categories)
+        
         msg = _transform_query(query)
         r = client.chat.completions.create(
             model='gpt-4o-mini',
-            messages=[{'role': 'system', 'content': SYSTEM}, {'role': 'user', 'content': msg + '\n\nReturn ONLY JSON. No conversational text.'}],
+            messages=[{'role': 'system', 'content': session_system}, {'role': 'user', 'content': msg + '\n\nReturn ONLY JSON. No conversational text.'}],
             temperature=0.3,
             max_tokens=max_tok
         )
@@ -118,7 +118,10 @@ def fetch_gemini(query):
     try:
         from google import genai
         client = genai.Client(api_key=key)
-        _, _, _, max_tok = _get_config()
+        _, _, _, max_tok, categories = _get_config()
+        
+        # Inject dynamic categories
+        session_system = SYSTEM.replace("{!!CATEGORIES!!}", categories)
         
         msg = _transform_query(query) + '\n\nReturn ONLY JSON.'
         
@@ -126,7 +129,7 @@ def fetch_gemini(query):
             model='gemini-flash-latest',
             contents=msg,
             config={
-                'system_instruction': SYSTEM,
+                'system_instruction': session_system,
                 'temperature': 0.3,
                 'max_output_tokens': max_tok,
                 'response_mime_type': 'application/json'

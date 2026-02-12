@@ -1,61 +1,90 @@
-# 🚀 BloggerFlowAI: Master Monetization Edition
-Massive, authoritative, 2026-current blog posts automated for maximum AdSense revenue. This system doesn't just "post news"—it strategically engineers high-CPC digital assets using real-time global context.
+# 🚀 BloggerFlowAI: Master Monetization Edition (2026)
+
+**BloggerFlowAI** is a high-performance, automated content engineering system designed to build high-CPC digital assets. It doesn't just "generate text"—it strategically crafts authoritative, multi-thousand-word blog posts optimized for **Google AdSense E-E-A-T** (Experience, Expertise, Authoritativeness, and Trustworthiness).
+
+---
 
 ## 🌟 Strategic Features
-1. **Elite News Induction**: Scans 21+ high-authority sources (Guardian, NYT, Reuters, TechCrunch) to find **2026-only** authentic news.
-2. **AdSense E-E-A-T Strategy**: The AI persona is a Digital Media Strategist. It prioritizes Experience, Expertise, Authoritativeness, and Trustworthiness.
-3. **High-CPC Categorization**: Automatically maps content to 5 premium, high-paid niches:
-   - 🎓 **Education & Learning**
-   - ✈️ **Scholarships & Study Abroad**
-   - 🌍 **International (Overseas) News**
-   - 💻 **Latest Tech News**
-   - 📱 **Unique & Innovative Gadget Reviews**
-4. **Authority Signaling**: Every post includes "Verified Reporting" timestamps (Date, Day, Time) and clickable source citations to maximize domain trust and AdSense approval.
 
-## 🛠️ Setup
-1. **Install Requirements**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. **Configuration**:
-   - Update `BLOGGER_BLOG_ID` in `.env`.
-   - Place Google Cloud `credentials.json` and `token.json` in `credentials/`.
-   - **AI Providers**:
-     - **OpenAI API** (Primary): Add `OPENAI_API_KEY` to `.env`.
-     - **Google Gemini API** (Fallback): Add `GEMINI_API_KEY` to `.env`.
+### 1. 🗞️ High-Authority News Induction
+The system features a custom **Newsbot Agent** that scans 21+ global high-authority sources (BBC, NYT, Reuters, TechCrunch, etc.) and strictly filters for **2026-relevant news**. 
+- **Year Filtering**: Ensures all context is current and future-facing.
+- **Deduplication**: Never posts the same story twice.
+- **Metadata Extraction**: Captures sources, links, and exact publishing times for authority signaling.
 
-## 🤖 Integrated Workflow
-The system follows a proprietary 3-stage funnel:
-1. **COLLECT**: The `Custom Agent` (NewsBot) scrapes real 2026 events from verified feeds.
-2. **STRATEGIZE**: AI summarizes news using "Executive Summaries" and high-level industrial terminology.
-3. **DEPLOY**: Articles are formatted with semantic HTML (`h2`, `h3`, `p style="justify"`) and posted to Blogger.
+### 2. 🧠 Massive Generation Engine (3,000 - 12,000+ Words)
+Unlike basic bots, BloggerFlowAI uses a multi-phase generation strategy:
+- **PHASE 1: Strategic Outlining**: AI drafts a 10-15 section roadmap based on the day's top news.
+- **PHASE 2: Section Deep-Dives**: Each section is generated individually as an "800+ word deep-dive," ensuring incredible detail and technical depth.
+- **Recovery Logic**: If a section fails, the system automatically triggers a "Single-shot Recovery" to ensure the article is never blank.
 
-## 📄 Project Structure
+### 3. 🎯 Dynamic Niche Control
+Control your niches and topics directly from your `.env` file without touching a single line of code:
+- **TOPICS**: Define a list of high-CPC subjects (Education, Scholarships, Tech, Gadgets).
+- **CATEGORIES**: Tell the AI exactly what AdSense categories to aim for. The AI dynamically reinjects these into its system prompt for every session.
+
+### 4. 💰 AdSense Optimization & E-E-A-T
+- **Semantic HTML**: Hierarchical `<h2>`, `<h3>` tags and justified text paragraphs.
+- **Authority Signals**: Automatically prepends "Verified Reports" with exact timestamps.
+- **Trust Citations**: Injects clickable source links into the content to build domain authority.
+
+---
+
+## 🛠️ Quick Start
+
+### 1. Installation
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Configuration (`.env`)
+Copy `example_env` to `.env` and fill in your keys:
+- **`BLOGGER_BLOG_ID`**: Your Google Blogger unique ID.
+- **`GEMINI_API_KEY`**: Get your key at [Google AI Studio](https://ai.google.dev/).
+- **`OUTLINE_SECTIONS`**: Set to `15` for massive posts.
+- **`SECTION_WORDS`**: Set to `800` for extreme detail.
+
+### 3. Google API Setup
+Place your `credentials.json` in the `credentials/` folder. On first run, it will open a browser for OAuth2 authentication.
+
+### 4. Run to Post
+```bash
+python main.py
+```
+
+---
+
+## 📄 Project Architecture
+
 ```
 BloggerFlowAI/
 ├── src/
-│   ├── app/           # Main Blogger & Posting Logic
+│   ├── app/           # Core Logic & Blogger Posting (post.py)
 │   ├── models/
-│   │   ├── custom_agent/   # 🗞️ NewsBot (Sources & Year Filters)
-│   │   └── remote_agent/   # 🧠 AI Providers (OpenAI & Gemini)
-│   └── config.py      # Main application config
-├── scripts/           # Switch AI, Test Workflows, Deploy tools
-├── docs/              # Strategic Guides & Diagrams
+│   │   ├── custom_agent/   # 🗞️ NewsBot (Feed scanning & 2026 filtering)
+│   │   └── remote_agent/   # 🧠 AI Providers (New google-genai SDK)
+│   └── config.py      # Master Config (reads from .env)
 ├── data/              # 💾 Real-time context (news.json)
+├── credentials/       # � Google API keys & tokens
 └── main.py            # Master Entry Point
 ```
 
-## 🔄 AI Switcher CLI
-Manage your failover stack easily:
-```bash
-python scripts/switch_ai.py status  # Check current provider
-python scripts/switch_ai.py all      # Enable OpenAI -> Gemini Failover
-python scripts/switch_ai.py gemini   # Force Gemini Only
-```
+---
 
-## ▶️ Usage
-- **Normal Operation**: `python main.py`
-- **Full Workflow Stress Test**: `python scripts/test_full_workflow.py`
-- **Check AI APIs**: `python scripts/switch_ai.py status`
+## ⚙️ Advanced Configuration (via `.env`)
 
-📖 For detailed strategic setup, see **[docs/AI_FAILOVER_DIAGRAM.txt](docs/AI_FAILOVER_DIAGRAM.txt)**.
+| Variable | Description |
+| :--- | :--- |
+| `RUN_MODE` | `direct` for immediate post, `scheduler` for automated runs. |
+| `TOPICS` | Comma-separated list for random topic selection. |
+| `CATEGORIES` | Custom AdSense categories the AI should prioritize. |
+| `MAX_NEWS_ITEMS` | Limits the number of sources cited in the article. |
+| `FORCE_POST` | Skips word-count checks to ensure a post always goes live. |
+
+---
+
+## 📈 Failover & Robustness
+The system uses the latest **google-genai v1.0+** SDK with **Gemini-Flash** for high-speed, JSON-native responses. If the primary AI provider fails or hits a quota, the system provides detailed logging and attempts a single-shot recovery content to ensure your site stays active.
+
+---
+*Developed for 2026 High-Authority Digital Asset Management.*
