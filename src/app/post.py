@@ -92,6 +92,10 @@ def generate_ai_content(topic=None, context_news=None):
         f"Use real links and sources. Use <p style=\"text-align: justify;\">.{context_str}"
     )
     header_data = _fetch_ai(header_query)
+    if not header_data:
+        _log("[!] Header generation failed. Retrying with simpler query...")
+        header_data = _fetch_ai(f"generate {selected_topic}")
+    
     if header_data:
         full_html += header_data.get('content', '')
         final_labels = header_data.get('labels', [])
@@ -99,6 +103,8 @@ def generate_ai_content(topic=None, context_news=None):
     else:
         final_labels = ["education", selected_topic.lower()]
         final_title = f"The Definitive Guide to {selected_topic}"
+        full_html += f"<h1>{final_title}</h1><p>Comprehensive guide about {selected_topic}.</p>"
+
     for i, section in enumerate(sections[1:], 2):
         _log(MSG_PHASE2_SECTION, i=i, total=len(sections), section=section)
         sec_query = (
@@ -118,6 +124,13 @@ def generate_ai_content(topic=None, context_news=None):
             full_html += f"\n\n<!-- Section: {section} -->\n" + content
         else:
             print(f"[!] Warning: Failed to generate section '{section}'")
+
+    if _word_count(full_html) < 100:
+         _log("[!] Content still too short. Attempting final single-shot recovery...")
+         recovery_data = _fetch_ai(f"generate detailed blog post about {selected_topic}")
+         if recovery_data and 'content' in recovery_data:
+             full_html += "\n\n" + recovery_data['content']
+
     full_html += "\n\n<!--- TABLE OF CONTENT START 2215587-->\n<script>mbtTOC();</script>\n<!--- TABLE OF CONTENT END 2215587-->"
     wc = _word_count(full_html)
     _log(MSG_COMPLETE, wc=wc, min=BLOG_POST_MIN_WORDS, max=BLOG_POST_MAX_WORDS)

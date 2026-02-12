@@ -54,16 +54,41 @@ JSON Formats:
 Return ONLY JSON. No conversational text."""
 
 def _parse_json(text):
+    if not text:
+        return None
     text = text.strip()
-    if '```json' in text:
-        text = text.split('```json')[1].split('```')[0].strip()
-    elif '```' in text:
-        text = text.split('```')[1].split('```')[0].strip()
+    
+    # Try to find JSON block in markdown
+    json_match = re.search(r'```json\s*(.*?)\s*```', text, re.DOTALL | re.IGNORECASE)
+    if json_match:
+        text = json_match.group(1).strip()
+    else:
+        # Try generic code block
+        code_match = re.search(r'```\s*(.*?)\s*```', text, re.DOTALL | re.IGNORECASE)
+        if code_match:
+            text = code_match.group(1).strip()
+        else:
+            # If no code blocks, try to find the start of JSON
+            try:
+                start = text.index('{')
+                end = text.rindex('}') + 1
+                text = text[start:end].strip()
+            except ValueError:
+                pass
+
     try:
+        # strict=False allows control characters like newlines in strings
         return json.loads(text, strict=False)
     except json.JSONDecodeError:
-        fixed = re.sub(r'(?<!\\)\n', r'\\n', text).replace('\r', '\\r').replace('\t', '\\t')
-        return json.loads(fixed, strict=False)
+        # Fix common issues like single quotes for keys or missing quotes
+        try:
+            # Replace single quotes on keys with double quotes
+            fixed = re.sub(r'([{,]\s*)\'([a-zA-Z0-9_]+)\'\s*:', r'\1"\2":', text)
+            # Replace unquoted keys
+            fixed = re.sub(r'([{,]\s*)([a-zA-Z0-9_]+)\s*:', r'\1"\2":', fixed)
+            return json.loads(fixed, strict=False)
+        except Exception:
+            return None
 
 def fetch_openai(query):
     key = os.getenv('OPENAI_API_KEY', '').strip()
@@ -91,12 +116,23 @@ def fetch_gemini(query):
     if not key:
         return None
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=key)
+        from google import genai
+        client = genai.Client(api_key=key)
         _, _, _, max_tok = _get_config()
-        model = genai.GenerativeModel('gemini-flash-latest', system_instruction=SYSTEM)
-        msg = _transform_query(query) + '\n\nReturn ONLY JSON. No conversational text.'
-        r = model.generate_content(msg, generation_config={'temperature': 0.3, 'max_output_tokens': max_tok})
+        
+        msg = _transform_query(query) + '\n\nReturn ONLY JSON.'
+        
+        r = client.models.generate_content(
+            model='gemini-flash-latest',
+            contents=msg,
+            config={
+                'system_instruction': SYSTEM,
+                'temperature': 0.3,
+                'max_output_tokens': max_tok,
+                'response_mime_type': 'application/json'
+            }
+        )
+        
         text = (r.text or '').strip()
         return _parse_json(text) if text else None
     except Exception as e:
